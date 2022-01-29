@@ -1,13 +1,12 @@
 import {
   Client,
   CatalogObject,
-  CatalogObjectBatch,
   BatchUpsertCatalogObjectsRequest,
 } from "square";
 import { v4 as uuidv4 } from "uuid";
 import { deleteInventoryItems } from "./general";
 
-const clubDiscountName = "Club Discount";
+const clubDiscountName = "Club Rate Discount";
 
 export const getClubRateDiscount = async (client: Client) => {
   const catalogApi = client.catalogApi;
@@ -53,7 +52,9 @@ export const insertClubRateDiscount = async (client: Client) => {
   let existingDiscount;
   try {
     existingDiscount = await getClubRateDiscount(client);
-  } catch (error) {}
+  } catch (error) {
+    console.debug("No club discount found");
+  }
   if (existingDiscount) {
     throw Error("Club discount already exists");
   }
@@ -99,6 +100,5 @@ export const insertClubRateDiscount = async (client: Client) => {
   const response = await discountsApi.batchUpsertCatalogObjects(
     batchUpsertRequest
   );
-  console.log(response);
   return response;
 };
