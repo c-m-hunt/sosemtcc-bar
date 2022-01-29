@@ -1,16 +1,19 @@
-import { Client, Environment } from 'square'
+import { Client, Environment } from "square";
 
-import { deleteInventoryItems, getItems } from './methods/general'
+import { deleteInventoryItems, getItems } from "./methods/general";
 
-import { insertClubRateDiscount, getClubRateDiscount, deleteClubRateDiscount } from './methods/discounts'
+import {
+  insertClubRateDiscount,
+  getClubRateDiscount,
+  deleteClubRateDiscount,
+} from "./methods/discounts";
 
-require('dotenv').config()
+require("dotenv").config();
 
 const client = new Client({
-    environment: process.env.SQUARE_ENV as Environment,
-    accessToken: process.env.SQUARE_ACCESS_TOKEN,
-  })
-
+  environment: process.env.SQUARE_ENV as Environment,
+  accessToken: process.env.SQUARE_ACCESS_TOKEN,
+});
 
 // getItems(client).then(async (items) => {
 //     if (items.result.objects) {
@@ -24,12 +27,12 @@ const client = new Client({
 //     }
 // });
 
-insertClubRateDiscount(client).then(response => {
-    console.log(response)
-    // response.result.objects?.map(obj => {   
-    //     console.log(obj)
-    // })
-})
+insertClubRateDiscount(client).then((response) => {
+  console.log(response);
+  // response.result.objects?.map(obj => {
+  //     console.log(obj)
+  // })
+});
 
 // getClubRateDiscount(client).then(response => {
 //     console.log(response)
