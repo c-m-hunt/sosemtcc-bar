@@ -3,11 +3,9 @@
 import { Client, Environment } from "square";
 import { program } from "commander";
 import kleur from "kleur";
-import { deleteInventoryItems, getItems } from "./methods/general";
 
 import {
   insertClubRateDiscount,
-  getClubRateDiscount,
   deleteClubRateDiscount,
 } from "./methods/discounts";
 

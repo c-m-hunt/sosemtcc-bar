@@ -5,10 +5,27 @@ import {
 } from "square";
 import { v4 as uuidv4 } from "uuid";
 import { deleteInventoryItems } from "./general";
+import { config } from "../config";
 
-const clubDiscountName = "Club Rate Discount";
+const clubDiscountName = "Club rate";
 
-export const getClubRateDiscount = async (client: Client) => {
+export interface ClubDiscount {
+  name: string;
+  discountType: string;
+  percentage: number;
+  allProducts: boolean;
+  categoryNames?: string[];
+  raw?: {
+    discount: CatalogObject;
+    pricingRule: CatalogObject;
+    productSet: CatalogObject;
+    categories?: CatalogObject[];
+  };
+}
+
+export const getClubRateDiscount = async (
+  client: Client
+): Promise<ClubDiscount> => {
   const catalogApi = client.catalogApi;
   const items = await catalogApi.listCatalog();
   const discount = items.result.objects?.filter(
@@ -35,16 +52,46 @@ export const getClubRateDiscount = async (client: Client) => {
   if (!productSet || productSet.length === 0) {
     throw Error("No product set found");
   }
-  return [discount[0], pricingRule[0], productSet[0]];
+
+  const categories = items.result.objects?.filter((item) =>
+    productSet[0].productSetData?.productIdsAny!.includes(item.id)
+  );
+
+  return {
+    name: clubDiscountName,
+    discountType: discount[0].discountData?.discountType!,
+    percentage: parseFloat(discount[0].discountData?.percentage!),
+    allProducts: productSet[0].productSetData?.allProducts!,
+    categoryNames: categories?.map((category) => category.categoryData?.name!),
+    raw: {
+      discount: discount[0],
+      pricingRule: pricingRule[0],
+      productSet: productSet[0],
+      categories,
+    },
+  };
 };
 
 export const deleteClubRateDiscount = async (client: Client) => {
   const catalogApi = client.catalogApi;
   const items = await catalogApi.listCatalog();
   const existingDiscount = await getClubRateDiscount(client);
-  return await deleteInventoryItems(
-    client,
-    existingDiscount.map((item) => item.id)
+  if (existingDiscount && existingDiscount.raw) {
+    return await deleteInventoryItems(client, [
+      existingDiscount.raw.discount.id,
+      existingDiscount.raw.pricingRule.id,
+      existingDiscount.raw.productSet.id,
+    ]);
+  }
+};
+
+export const getClubDiscountCategories = async (client: Client) => {
+  const catalogApi = client.catalogApi;
+  const items = await catalogApi.listCatalog();
+  return items.result.objects?.filter(
+    (item) =>
+      item.type === "CATEGORY" &&
+      config.clubDiscountCategories.includes(item.categoryData?.name || "")
   );
 };
 
@@ -58,6 +105,7 @@ export const insertClubRateDiscount = async (client: Client) => {
   if (existingDiscount) {
     throw Error("Club discount already exists");
   }
+  const categories = await getClubDiscountCategories(client);
 
   const discountsApi = client.catalogApi;
   const productSet: CatalogObject = {
@@ -65,7 +113,10 @@ export const insertClubRateDiscount = async (client: Client) => {
     id: "#ProductSet",
     isDeleted: false,
     presentAtAllLocations: true,
-    productSetData: { allProducts: true },
+    productSetData: {
+      allProducts: false,
+      productIdsAny: categories?.map((category) => category.id) || [],
+    },
   };
 
   const discount: CatalogObject = {
