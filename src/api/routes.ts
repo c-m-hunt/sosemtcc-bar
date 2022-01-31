@@ -9,10 +9,14 @@ const client = new Client({
 
 const router = express.Router();
 
-router.get("/discounts", async (req, res) => {
-  const discount = await getClubRateDiscount(client);
-  delete discount.raw;
-  res.json(discount);
+router.get("/discount", async (req, res) => {
+  try {
+    const discount = await getClubRateDiscount(client);
+    delete discount.raw;
+    res.json(discount);
+  } catch (ex) {
+    res.sendStatus(404);
+  }
 });
 
 export default router;
