@@ -1,4 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { ClubDiscount } from "../types";
 import * as api from "../api";
 
@@ -15,35 +16,6 @@ const initialState: DiscountState = {
   saveStatus: "idle",
   discount: undefined,
 };
-
-export const fetchDiscount = createAsyncThunk(
-  "discount/getDiscount",
-  async () => {
-    try {
-      const discount = await api.fetchDiscount();
-      return discount as ClubDiscount;
-    } catch (ex) {
-      return undefined;
-    }
-  }
-);
-
-export const insertDiscount = createAsyncThunk(
-  "discount/insertDiscount",
-  async (_, thunk) => {
-    const discount = await api.insertDiscount();
-    thunk.dispatch(fetchDiscount());
-    return discount;
-  }
-);
-
-export const deleteDiscount = createAsyncThunk(
-  "discount/deleteDiscount",
-  async (_, thunk) => {
-    const discount = await api.deleteDiscount();
-    return discount;
-  }
-);
 
 const discount = createSlice({
   name: "discount",
