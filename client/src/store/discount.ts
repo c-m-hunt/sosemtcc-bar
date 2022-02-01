@@ -2,13 +2,17 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { ClubDiscount } from "../types";
 import * as api from "../api";
 
+type RequestStatus = "idle" | "loading" | "succeeded" | "failed";
+
 export interface DiscountState {
-  loadStatus: "idle" | "loading" | "succeeded" | "failed";
+  loadStatus: RequestStatus;
+  saveStatus: RequestStatus;
   discount?: ClubDiscount;
 }
 
 const initialState: DiscountState = {
   loadStatus: "idle",
+  saveStatus: "idle",
   discount: undefined,
 };
 
@@ -21,6 +25,23 @@ export const fetchDiscount = createAsyncThunk(
     } catch (ex) {
       return undefined;
     }
+  }
+);
+
+export const insertDiscount = createAsyncThunk(
+  "discount/insertDiscount",
+  async (_, thunk) => {
+    const discount = await api.insertDiscount();
+    thunk.dispatch(fetchDiscount());
+    return discount;
+  }
+);
+
+export const deleteDiscount = createAsyncThunk(
+  "discount/deleteDiscount",
+  async (_, thunk) => {
+    const discount = await api.deleteDiscount();
+    return discount;
   }
 );
 
@@ -44,6 +65,28 @@ const discount = createSlice({
       if (action.payload) {
         state.discount = action.payload;
       }
+    });
+    builder.addCase(fetchDiscount.rejected, (state) => {
+      state.loadStatus = "failed";
+    });
+    builder.addCase(insertDiscount.pending, (state) => {
+      state.saveStatus = "loading";
+    });
+    builder.addCase(insertDiscount.fulfilled, (state, action) => {
+      state.saveStatus = "succeeded";
+    });
+    builder.addCase(insertDiscount.rejected, (state) => {
+      state.saveStatus = "failed";
+    });
+    builder.addCase(deleteDiscount.pending, (state) => {
+      state.saveStatus = "loading";
+    });
+    builder.addCase(deleteDiscount.fulfilled, (state, action) => {
+      state.saveStatus = "succeeded";
+      state.discount = undefined;
+    });
+    builder.addCase(deleteDiscount.rejected, (state) => {
+      state.saveStatus = "failed";
     });
   },
 });

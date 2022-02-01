@@ -7,7 +7,6 @@ import reportWebVitals from "./reportWebVitals";
 import { store } from "./store/store";
 import { fetchDiscount } from "./store/discount";
 
-
 store.dispatch(fetchDiscount());
 
 ReactDOM.render(
