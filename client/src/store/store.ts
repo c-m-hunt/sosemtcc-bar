@@ -1,12 +1,8 @@
 import { configureStore } from "@reduxjs/toolkit";
-import discountReducer, { DiscountState } from "./discount";
-
-export interface RootState {
-  discount: DiscountState;
-}
+import { barApi } from "./services/bar";
 
 const reducer = {
-  discount: discountReducer,
+  [barApi.reducerPath]: barApi.reducer,
 };
 
 export const store = configureStore({
