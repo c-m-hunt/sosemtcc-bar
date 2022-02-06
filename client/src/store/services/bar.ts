@@ -1,5 +1,4 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { response } from "express";
 import { Order } from "square";
 import { ClubDiscount } from "../../types";
 
@@ -18,20 +17,14 @@ export const barApi = createApi({
         url: `discount`,
         method: "GET",
       }),
-      providesTags: () => {
-        console.log("HERE");
-        return [DISCOUNT_TAG];
-      },
+      providesTags: [DISCOUNT_TAG],
     }),
     insertDiscount: builder.mutation<ClubDiscount[], void>({
       query: () => ({
         url: `discount`,
         method: "POST",
       }),
-      invalidatesTags: () => {
-        console.log("HERE");
-        return [DISCOUNT_TAG];
-      },
+      invalidatesTags: [DISCOUNT_TAG],
     }),
     deleteDiscount: builder.mutation<ClubDiscount[], void>({
       query: () => ({
@@ -39,10 +32,7 @@ export const barApi = createApi({
         method: "DELETE",
       }),
       transformResponse: () => [],
-      invalidatesTags: () => {
-        console.log("HERE");
-        return [DISCOUNT_TAG];
-      },
+      invalidatesTags: [DISCOUNT_TAG],
     }),
     fetchOrders: builder.query<Order[], void>({
       query: () => ({

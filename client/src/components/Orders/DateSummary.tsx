@@ -14,7 +14,7 @@ export const DateSummary = () => {
       <Card.Header as="h5">Order Summary</Card.Header>
       <Card.Body>
         {isLoading && <Alert variant="info">Loading...</Alert>}
-        {ordersByDate && (
+        {!isLoading && ordersByDate && (
           <Table>
             <thead>
               <tr>

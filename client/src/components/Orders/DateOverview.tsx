@@ -18,11 +18,16 @@ export const DateOverview = ({ date }: DateOverviewProps) => {
       <Card.Header as="h5">Orders for {date.toDateString()}</Card.Header>
       <Card.Body>
         {isLoading && <Alert variant="info">Loading...</Alert>}
-        {<TopProducts orders={ordersForDate} show={5} />}
+        {!isLoading && <TopProducts orders={ordersForDate} show={5} />}
       </Card.Body>
     </Card>
   );
 };
+
+interface BestCustomersProperties {
+  orders: Order[];
+  show: number;
+}
 
 interface TopProductsProperties {
   orders: Order[];

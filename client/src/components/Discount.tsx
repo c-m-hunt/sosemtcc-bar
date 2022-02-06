@@ -7,25 +7,47 @@ import {
 } from "../store/services/bar";
 
 export const Discount = () => {
-  const { data: discounts, error, isLoading } = useFetchDiscountQuery();
+  const {
+    data: discounts,
+    isLoading,
+    refetch: refetechDiscount,
+  } = useFetchDiscountQuery();
   const [insertDiscount, insertDiscountResult] = useInsertDiscountMutation();
   const [deleteDiscount, deleteDiscountResult] = useDeleteDiscountMutation();
 
   const discount = discounts?.length === 1 ? discounts[0] : null;
-
-  console.log("Insert", insertDiscountResult);
-  console.log("Delete", deleteDiscountResult);
 
   const loading =
     isLoading ||
     insertDiscountResult.isLoading ||
     deleteDiscountResult.isLoading;
 
+  let loadingMessage = "Loading...";
+
+  if (insertDiscountResult.isLoading) {
+    loadingMessage = "Adding club discount...";
+  }
+  if (deleteDiscountResult.isLoading) {
+    loadingMessage = "Deleting club discount...";
+  }
+
+  const handleInsertDiscount = () => {
+    insertDiscount().then(() => {
+      refetechDiscount();
+    });
+  };
+
+  const handleDeleteDiscount = () => {
+    deleteDiscount().then(() => {
+      refetechDiscount();
+    });
+  };
+
   return (
-    <Card style={{ width: "18rem" }}>
+    <Card>
       <Card.Header as="h5">Club Discount</Card.Header>
       <Card.Body>
-        {loading && <Alert variant="info">Loading...</Alert>}
+        {loading && <Alert variant="info">{loadingMessage}</Alert>}
         {!loading && discount && (
           <>
             <Alert variant="success">Club discount is currently enabled</Alert>
@@ -48,19 +70,19 @@ export const Discount = () => {
             <Button
               variant="danger"
               disabled={loading}
-              onClick={() => deleteDiscount()}
+              onClick={handleDeleteDiscount}
             >
               Disable club discount
             </Button>
           </>
         )}
-        {!isLoading && !discount && (
+        {!loading && !discount && (
           <>
             <Alert variant="danger">Club discount is currently disabled</Alert>
             <Button
               variant="success"
               disabled={loading}
-              onClick={() => insertDiscount()}
+              onClick={handleInsertDiscount}
             >
               Enable club discount
             </Button>

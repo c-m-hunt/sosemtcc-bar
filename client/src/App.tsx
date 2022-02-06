@@ -5,16 +5,24 @@ import { NavBar } from "./components/NavBar";
 import { Discount } from "./components/Discount";
 import { DateSummary } from "./components/Orders/DateSummary";
 import { DateOverview } from "./components/Orders/DateOverview";
-import { Container } from "react-bootstrap";
+import { Col, Container, Row } from "react-bootstrap";
 
 const App = () => {
   return (
     <div className="App">
       <NavBar />
       <Container>
-        <Discount />
-        <DateOverview date={new Date("2022-01-29")} />
-        <DateSummary />
+        <Row>
+          <Col>
+            <Discount />
+          </Col>
+          <Col>
+            <DateOverview date={new Date("2022-01-29")} />
+          </Col>
+          <Col>
+            <DateSummary />
+          </Col>
+        </Row>
       </Container>
     </div>
   );
