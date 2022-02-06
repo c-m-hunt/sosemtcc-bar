@@ -19,10 +19,10 @@ export const DateSummary = () => {
             <thead>
               <tr>
                 <th>Date</th>
-                <th>Count</th>
-                <th>Average</th>
-                <th>Fees</th>
-                <th>Total Sales</th>
+                <th className="money">Count</th>
+                <th className="money">Average</th>
+                <th className="money">Fees</th>
+                <th className="money">Total sales</th>
               </tr>
             </thead>
             <tbody>
@@ -43,10 +43,12 @@ export const DateSummary = () => {
                 return (
                   <tr key={date}>
                     <td>{date}</td>
-                    <td>{orders.length}</td>
-                    <td>£{(total / 100 / orders.length).toFixed(2)}</td>
-                    <td>£{(fees / 100).toFixed(2)}</td>
-                    <td>£{(total / 100).toFixed(2)}</td>
+                    <td className="money">{orders.length}</td>
+                    <td className="money">
+                      £{(total / 100 / orders.length).toFixed(2)}
+                    </td>
+                    <td className="money">£{(fees / 100).toFixed(2)}</td>
+                    <td className="money">£{(total / 100).toFixed(2)}</td>
                   </tr>
                 );
               })}

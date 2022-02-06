@@ -5,7 +5,7 @@ export const NavBar = () => {
   return (
     <Navbar bg="light" expand="lg">
       <Container>
-        <Navbar.Brand href="#home">SOSEMTCC Bar</Navbar.Brand>
+        <Navbar.Brand href="#home">SOSEMTCC Bar Dashboard</Navbar.Brand>
       </Container>
     </Navbar>
   );
