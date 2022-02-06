@@ -1,21 +1,54 @@
 import React from "react";
 import { Card, Button, Alert, Table } from "react-bootstrap";
-import { useSelector, useDispatch } from "react-redux";
-import { RootState } from "../store/store";
-
-import { deleteDiscount, insertDiscount } from "../store/discount";
+import {
+  useFetchDiscountQuery,
+  useInsertDiscountMutation,
+  useDeleteDiscountMutation,
+} from "../store/services/bar";
 
 export const Discount = () => {
-  const discount = useSelector((state: RootState) => state.discount.discount);
-  const loading = useSelector((state: RootState) => state.discount.loadStatus);
-  const saving = useSelector((state: RootState) => state.discount.saveStatus);
-  const dispatch = useDispatch();
+  const {
+    data: discounts,
+    isLoading,
+    refetch: refetechDiscount,
+  } = useFetchDiscountQuery();
+  const [insertDiscount, insertDiscountResult] = useInsertDiscountMutation();
+  const [deleteDiscount, deleteDiscountResult] = useDeleteDiscountMutation();
+
+  const discount = discounts?.length === 1 ? discounts[0] : null;
+
+  const loading =
+    isLoading ||
+    insertDiscountResult.isLoading ||
+    deleteDiscountResult.isLoading;
+
+  let loadingMessage = "Loading...";
+
+  if (insertDiscountResult.isLoading) {
+    loadingMessage = "Adding club discount...";
+  }
+  if (deleteDiscountResult.isLoading) {
+    loadingMessage = "Deleting club discount...";
+  }
+
+  const handleInsertDiscount = () => {
+    insertDiscount().then(() => {
+      refetechDiscount();
+    });
+  };
+
+  const handleDeleteDiscount = () => {
+    deleteDiscount().then(() => {
+      refetechDiscount();
+    });
+  };
+
   return (
-    <Card style={{ width: "18rem" }}>
+    <Card>
       <Card.Header as="h5">Club Discount</Card.Header>
       <Card.Body>
-        {loading === "loading" && <Alert variant="info">Loading...</Alert>}
-        {loading === "succeeded" && discount && (
+        {loading && <Alert variant="info">{loadingMessage}</Alert>}
+        {!loading && discount && (
           <>
             <Alert variant="success">Club discount is currently enabled</Alert>
             <Table>
@@ -36,20 +69,20 @@ export const Discount = () => {
             </Table>
             <Button
               variant="danger"
-              disabled={["loading"].includes(saving)}
-              onClick={() => dispatch(deleteDiscount())}
+              disabled={loading}
+              onClick={handleDeleteDiscount}
             >
               Disable club discount
             </Button>
           </>
         )}
-        {loading === "succeeded" && !discount && (
+        {!loading && !discount && (
           <>
             <Alert variant="danger">Club discount is currently disabled</Alert>
             <Button
               variant="success"
-              disabled={["loading"].includes(saving)}
-              onClick={() => dispatch(insertDiscount())}
+              disabled={loading}
+              onClick={handleInsertDiscount}
             >
               Enable club discount
             </Button>
