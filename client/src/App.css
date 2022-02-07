@@ -1,0 +1,15 @@
+.App {
+  text-align: left;
+}
+
+.card {
+  margin-top: 0.5rem;
+}
+
+.money {
+  text-align: right;
+}
+
+.form-select {
+  margin-bottom: 1rem;
+}

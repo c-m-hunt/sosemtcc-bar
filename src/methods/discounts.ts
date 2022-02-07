@@ -6,26 +6,13 @@ import {
 import { v4 as uuidv4 } from "uuid";
 import { deleteInventoryItems } from "./general";
 import { config } from "../config";
+import { ClubDiscountWithRaw } from "../types";
 
 const clubDiscountName = "Club rate";
 
-export interface ClubDiscount {
-  name: string;
-  discountType: string;
-  percentage: number;
-  allProducts: boolean;
-  categoryNames?: string[];
-  raw?: {
-    discount: CatalogObject;
-    pricingRule: CatalogObject;
-    productSet: CatalogObject;
-    categories?: CatalogObject[];
-  };
-}
-
 export const getClubRateDiscount = async (
   client: Client
-): Promise<ClubDiscount> => {
+): Promise<ClubDiscountWithRaw> => {
   const catalogApi = client.catalogApi;
   const items = await catalogApi.listCatalog();
   const discount = items.result.objects?.filter(
