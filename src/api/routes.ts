@@ -38,7 +38,6 @@ router.post("/discount", async (req, res) => {
     delete discount.raw;
     res.json([discount]);
   } catch (ex) {
-    console.error(ex);
     res.sendStatus(500);
   }
 });
@@ -64,7 +63,7 @@ router.get("/orders", async (req, res) => {
     const orders = await getOrdersForLocations(client, locationIds);
     res.json(orders.result.orders);
   } catch (ex) {
-    console.error(ex);
+    console.error(ex.message);
     res.sendStatus(500);
   }
 });

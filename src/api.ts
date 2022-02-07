@@ -17,8 +17,6 @@ app.use(morgan("combined"));
 
 const staticPath = __dirname + "/../client/build";
 
-console.log(staticPath);
-
 app.use(express.static(staticPath));
 
 app.use("/api", apiRouter);

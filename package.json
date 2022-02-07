@@ -6,6 +6,7 @@
   "scripts": {
     "cmd": "ts-node src/cmd.ts",
     "server": "nodemon src/api.ts",
+    "server-prod": "ts-node src/api.ts",
     "lint": "eslint . --ext .ts",
     "prettier": "prettier --write '**/*.ts'"
   },

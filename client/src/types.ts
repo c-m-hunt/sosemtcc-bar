@@ -1,4 +1,4 @@
-export * from "./../../src/types";
+export * from './serverTypes';
 
 export interface Config {
   apiBaseUrl: string;
