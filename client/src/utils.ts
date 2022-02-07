@@ -20,3 +20,18 @@ export const filterOrdersByDate = (orders: Order[], date: Date) => {
     return orderDate.toDateString() === date.toDateString();
   });
 };
+
+//Saves the key to local storage
+export const saveKeyToLocalStorage = (key: string) => {
+  localStorage.setItem("key", key);
+};
+
+// Gets the key from local storage
+export const getKeyFromLocalStorage = () => {
+  return localStorage.getItem("key");
+};
+
+// Deletes the key from local storage
+export const deleteKeyFromLocalStorage = () => {
+  localStorage.removeItem("key");
+};

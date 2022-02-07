@@ -33,11 +33,11 @@ export const deleteInventoryItems = async (
 
 export const getLocations = async (
   client: Client
-) : Promise<ApiResponse<ListLocationsResponse>> => {
+): Promise<ApiResponse<ListLocationsResponse>> => {
   const locationsApi = client.locationsApi;
   const locations = await locationsApi.listLocations();
   return locations;
-}
+};
 
 export const getOrdersForLocations = async (
   client: Client,
@@ -46,4 +46,4 @@ export const getOrdersForLocations = async (
   const ordersApi = client.ordersApi;
   const orders = await ordersApi.searchOrders({ locationIds });
   return orders;
-}
+};

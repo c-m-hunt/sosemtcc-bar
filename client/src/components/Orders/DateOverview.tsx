@@ -10,14 +10,17 @@ interface DateOverviewProps {
 
 export const DateOverview = ({ date }: DateOverviewProps) => {
   const { data: orders, error, isLoading } = useFetchOrdersQuery();
-  if (orders && orders.length > 0 && !date) {
-    date = orders[0].createdAt ? new Date(orders[0].createdAt) : new Date();
-  }
   const [selectedDate, setSelectedDate] = useState(date);
-  const ordersForDate = date
-    ? filterOrdersByDate(orders || [], selectedDate || date)
+  if (orders && orders.length > 0 && !selectedDate) {
+    setSelectedDate(
+      orders[0].createdAt ? new Date(orders[0].createdAt) : new Date()
+    );
+  }
+
+  const ordersForDate = selectedDate
+    ? filterOrdersByDate(orders || [], selectedDate)
     : [];
-  const title = date
+  const title = selectedDate
     ? `Orders for ${(selectedDate || date).toDateString()}`
     : "Orders";
   return (

@@ -1,7 +1,12 @@
 import express from "express";
 import { Client, Environment } from "square";
-import { deleteClubRateDiscount, getClubRateDiscount, insertClubRateDiscount } from "../methods/discounts";
+import {
+  deleteClubRateDiscount,
+  getClubRateDiscount,
+  insertClubRateDiscount,
+} from "../methods/discounts";
 import { getLocations, getOrdersForLocations } from "../methods/general";
+import { authenticate } from "./middleware";
 
 const client = new Client({
   environment: process.env.SQUARE_ENV as Environment,
@@ -10,7 +15,11 @@ const client = new Client({
 
 const router = express.Router();
 
-BigInt.prototype.toJSON = function() { return this.toString() }
+router.use(authenticate);
+
+BigInt.prototype.toJSON = function () {
+  return this.toString();
+};
 
 router.get("/discount", async (req, res) => {
   try {
@@ -37,13 +46,13 @@ router.post("/discount", async (req, res) => {
 router.delete("/discount", async (req, res) => {
   try {
     const discount = await deleteClubRateDiscount(client);
-    res.json({"success": true});
+    res.json({ success: true });
   } catch (ex) {
     res.sendStatus(500);
   }
 });
 
-router.get("/orders", async(req, res) => {
+router.get("/orders", async (req, res) => {
   try {
     const locationRes = await getLocations(client);
     const locations = locationRes.result.locations;
@@ -51,7 +60,7 @@ router.get("/orders", async(req, res) => {
       res.sendStatus(404);
       return;
     }
-    const locationIds = locations.map(l => l.id!)
+    const locationIds = locations.map((l) => l.id!);
     const orders = await getOrdersForLocations(client, locationIds);
     res.json(orders.result.orders);
   } catch (ex) {
@@ -59,6 +68,5 @@ router.get("/orders", async(req, res) => {
     res.sendStatus(500);
   }
 });
-
 
 export default router;

@@ -15,9 +15,11 @@ app.use(bodyParser.json());
 app.use(cors());
 app.use(morgan("combined"));
 
-app.get("/", (req, res) => {
-  res.send("Hello World!");
-});
+const staticPath = __dirname + "/../client/build";
+
+console.log(staticPath);
+
+app.use(express.static(staticPath));
 
 app.use("/api", apiRouter);
 
