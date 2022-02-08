@@ -1,5 +1,10 @@
 .App {
   text-align: left;
+  font-size: 0.8rem;
+}
+
+h5 {
+  font-size: 1rem;
 }
 
 .card {

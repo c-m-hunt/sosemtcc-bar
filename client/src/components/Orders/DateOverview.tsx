@@ -9,7 +9,7 @@ interface DateOverviewProps {
 }
 
 export const DateOverview = ({ date }: DateOverviewProps) => {
-  const { data: orders, error, isLoading } = useFetchOrdersQuery();
+  const { data: orders, isLoading } = useFetchOrdersQuery();
   const [selectedDate, setSelectedDate] = useState(date);
   if (orders && orders.length > 0 && !selectedDate) {
     setSelectedDate(

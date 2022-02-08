@@ -1,11 +1,10 @@
 import React from "react";
 import { Card, Alert, Table } from "react-bootstrap";
-import { Order } from "square";
 import { useFetchOrdersQuery } from "../../store/services/bar";
 import { groupOrdersByDate } from "../../utils";
 
 export const DateSummary = () => {
-  const { data: orders, error, isLoading } = useFetchOrdersQuery();
+  const { data: orders, isLoading } = useFetchOrdersQuery();
 
   const ordersByDate = groupOrdersByDate(orders || []);
 

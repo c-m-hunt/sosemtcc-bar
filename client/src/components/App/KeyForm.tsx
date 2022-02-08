@@ -1,8 +1,8 @@
-import React, { MouseEventHandler, useState } from "react";
+import React, { useState } from "react";
 import { Form, Button, Card, Alert } from "react-bootstrap";
 import { useDispatch } from "react-redux";
 import { setKey } from "../../store/appSlice";
-import { saveKeyToLocalStorage } from '../../utils'
+import { saveKeyToLocalStorage } from "../../utils";
 
 export const KeyForm = () => {
   const dispatch = useDispatch();

@@ -10,15 +10,16 @@ export const Discount = () => {
   const {
     data: discounts,
     isLoading,
+    isFetching,
     refetch: refetechDiscount,
   } = useFetchDiscountQuery();
   const [insertDiscount, insertDiscountResult] = useInsertDiscountMutation();
   const [deleteDiscount, deleteDiscountResult] = useDeleteDiscountMutation();
-
   const discount = discounts?.length === 1 ? discounts[0] : null;
 
   const loading =
     isLoading ||
+    isFetching ||
     insertDiscountResult.isLoading ||
     deleteDiscountResult.isLoading;
 

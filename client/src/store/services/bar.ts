@@ -59,6 +59,7 @@ export const barApi = createApi({
 
 export const {
   useFetchDiscountQuery,
+  useLazyFetchDiscountQuery,
   useInsertDiscountMutation,
   useDeleteDiscountMutation,
   useFetchOrdersQuery,
