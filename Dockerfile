@@ -13,6 +13,7 @@ RUN yarn install
 
 COPY client .
 COPY src/types.ts src/serverTypes.ts
+COPY client/src/configProd.ts src/config.ts
 
 WORKDIR /app
 
