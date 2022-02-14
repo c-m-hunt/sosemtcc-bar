@@ -2,6 +2,7 @@ import {
   ApiResponse,
   BatchDeleteCatalogObjectsRequest,
   BatchDeleteCatalogObjectsResponse,
+  CatalogObject,
   Client,
   ListCatalogResponse,
   ListLocationsResponse,
@@ -9,12 +10,19 @@ import {
   SearchOrdersResponse,
 } from "square";
 
-export const getItems = async (
-  client: Client
-): Promise<ApiResponse<ListCatalogResponse>> => {
+import { squareCache, ALL_ITEMS_CACHE_KEY } from "./cache";
+
+export const getItems = async (client: Client): Promise<CatalogObject[]> => {
+  const cached =
+    squareCache.get<ApiResponse<ListCatalogResponse>>(ALL_ITEMS_CACHE_KEY);
+  if (cached) {
+    console.log("Returning CACHED output");
+    return cached.result.objects || [];
+  }
   const catalogApi = client.catalogApi;
   const items = await catalogApi.listCatalog();
-  return items;
+  squareCache.set(ALL_ITEMS_CACHE_KEY, items);
+  return items.result.objects || [];
 };
 
 export const deleteInventoryItems = async (
@@ -37,6 +45,17 @@ export const getLocations = async (
   const locationsApi = client.locationsApi;
   const locations = await locationsApi.listLocations();
   return locations;
+};
+
+export const getCategories = async (
+  client: Client
+): Promise<CatalogObject[]> => {
+  const allItems = await getItems(client);
+  if (!allItems) {
+    return [];
+  }
+  const categories = allItems.filter((item) => item.type === "CATEGORY");
+  return categories;
 };
 
 export const getOrdersForLocations = async (

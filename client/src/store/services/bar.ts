@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { config } from "./../../config";
 import { Order } from "square";
-import { ClubDiscount } from "../../types";
+import { ClubDiscount, CoreResponse } from "../../types";
 import { RootState } from "../store";
 
 export const DISCOUNT_REDUCER = "discount";
@@ -25,9 +25,9 @@ export const barApi = createApi({
   baseQuery,
   tagTypes: [DISCOUNT_TAG, ORDER_TAG],
   endpoints: (builder) => ({
-    fetchDiscount: builder.query<ClubDiscount[], void>({
+    fetchCore: builder.query<CoreResponse, void>({
       query: (b) => ({
-        url: `discount`,
+        url: `core`,
         method: "GET",
       }),
       providesTags: [DISCOUNT_TAG],
@@ -58,8 +58,8 @@ export const barApi = createApi({
 });
 
 export const {
-  useFetchDiscountQuery,
-  useLazyFetchDiscountQuery,
+  useFetchCoreQuery,
+  useLazyFetchCoreQuery,
   useInsertDiscountMutation,
   useDeleteDiscountMutation,
   useFetchOrdersQuery,

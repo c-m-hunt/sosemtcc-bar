@@ -4,9 +4,10 @@ import {
   BatchUpsertCatalogObjectsRequest,
 } from "square";
 import { v4 as uuidv4 } from "uuid";
-import { deleteInventoryItems } from "./general";
+import { deleteInventoryItems, getItems } from "./general";
 import { config } from "../config";
 import { ClubDiscountWithRaw } from "../types";
+import { squareCache, ALL_ITEMS_CACHE_KEY } from "./cache";
 
 const clubDiscountName = "Club rate";
 
@@ -14,14 +15,14 @@ export const getClubRateDiscount = async (
   client: Client
 ): Promise<ClubDiscountWithRaw> => {
   const catalogApi = client.catalogApi;
-  const items = await catalogApi.listCatalog();
-  const discount = items.result.objects?.filter(
+  const items = await getItems(client);
+  const discount = items.filter(
     (item) => item.discountData?.name === clubDiscountName
   );
   if (!discount || discount.length === 0) {
     throw Error("No club discount found");
   }
-  const pricingRule = items.result.objects?.filter((item) => {
+  const pricingRule = items.filter((item) => {
     return (
       item.type === "PRICING_RULE" &&
       item.pricingRuleData?.discountId === discount[0].id
@@ -30,7 +31,7 @@ export const getClubRateDiscount = async (
   if (!pricingRule || pricingRule.length === 0) {
     throw Error("No pricing rule found");
   }
-  const productSet = items.result.objects?.filter((item) => {
+  const productSet = items.filter((item) => {
     return (
       item.type === "PRODUCT_SET" &&
       item.id === pricingRule[0].pricingRuleData?.matchProductsId
@@ -40,7 +41,7 @@ export const getClubRateDiscount = async (
     throw Error("No product set found");
   }
 
-  const categories = items.result.objects?.filter((item) =>
+  const categories = items.filter((item) =>
     productSet[0].productSetData?.productIdsAny!.includes(item.id)
   );
 
@@ -64,11 +65,13 @@ export const deleteClubRateDiscount = async (client: Client) => {
   const items = await catalogApi.listCatalog();
   const existingDiscount = await getClubRateDiscount(client);
   if (existingDiscount && existingDiscount.raw) {
-    return await deleteInventoryItems(client, [
+    const response = await deleteInventoryItems(client, [
       existingDiscount.raw.discount.id,
       existingDiscount.raw.pricingRule.id,
       existingDiscount.raw.productSet.id,
     ]);
+    squareCache.del(ALL_ITEMS_CACHE_KEY);
+    return response;
   }
 };
 
@@ -138,5 +141,6 @@ export const insertClubRateDiscount = async (client: Client) => {
   const response = await discountsApi.batchUpsertCatalogObjects(
     batchUpsertRequest
   );
+  squareCache.del(ALL_ITEMS_CACHE_KEY);
   return response;
 };
