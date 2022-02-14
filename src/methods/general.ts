@@ -47,15 +47,26 @@ export const getLocations = async (
   return locations;
 };
 
-export const getCategories = async (
-  client: Client
+export const getItemsByType = async (
+  client: Client,
+  type: string
 ): Promise<CatalogObject[]> => {
   const allItems = await getItems(client);
   if (!allItems) {
     return [];
   }
-  const categories = allItems.filter((item) => item.type === "CATEGORY");
-  return categories;
+  const items = allItems.filter((item) => item.type === type);
+  return items;
+};
+
+export const getCategories = async (
+  client: Client
+): Promise<CatalogObject[]> => {
+  return await getItemsByType(client, "CATEGORY");
+};
+
+export const getProducts = async (client: Client): Promise<CatalogObject[]> => {
+  return await getItemsByType(client, "ITEM");
 };
 
 export const getOrdersForLocations = async (

@@ -5,10 +5,12 @@ import {
   getClubRateDiscount,
   insertClubRateDiscount,
 } from "../methods/discounts";
+import { formatCategory, formatProduct } from "../methods/format";
 import {
   getCategories,
   getLocations,
   getOrdersForLocations,
+  getProducts,
 } from "../methods/general";
 import { ClubDiscount, ClubDiscountWithRaw } from "../types";
 import { authenticate } from "./middleware";
@@ -35,12 +37,14 @@ router.get("/core", async (req, res) => {
     discount = [];
   }
   let categoreies = await getCategories(client);
+  let products = await getProducts(client);
+  const formattedCategories = categoreies.map((category) =>
+    formatCategory(category)
+  );
   res.json({
     discount: discount !== undefined ? discount : [],
-    categories: categoreies.map((category) => ({
-      id: category.id,
-      name: category.categoryData?.name || "",
-    })),
+    categories: formattedCategories,
+    products: products.map((prod) => formatProduct(prod, formattedCategories)),
   });
 });
 

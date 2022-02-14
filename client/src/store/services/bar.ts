@@ -4,7 +4,7 @@ import { Order } from "square";
 import { ClubDiscount, CoreResponse } from "../../types";
 import { RootState } from "../store";
 
-export const DISCOUNT_REDUCER = "discount";
+export const API_REDUCER = "api";
 
 export const DISCOUNT_TAG = "DISCOUNT";
 export const ORDER_TAG = "ORDER";
@@ -21,7 +21,7 @@ const baseQuery = fetchBaseQuery({
 });
 
 export const barApi = createApi({
-  reducerPath: DISCOUNT_REDUCER,
+  reducerPath: API_REDUCER,
   baseQuery,
   tagTypes: [DISCOUNT_TAG, ORDER_TAG],
   endpoints: (builder) => ({

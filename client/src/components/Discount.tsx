@@ -11,7 +11,7 @@ export const Discount = () => {
     data,
     isLoading,
     isFetching,
-    refetch: refetechDiscount,
+    refetch: refetchCore,
   } = useFetchCoreQuery();
   const [insertDiscount, insertDiscountResult] = useInsertDiscountMutation();
   const [deleteDiscount, deleteDiscountResult] = useDeleteDiscountMutation();
@@ -34,13 +34,13 @@ export const Discount = () => {
 
   const handleInsertDiscount = () => {
     insertDiscount().then(() => {
-      refetechDiscount();
+      refetchCore();
     });
   };
 
   const handleDeleteDiscount = () => {
     deleteDiscount().then(() => {
-      refetechDiscount();
+      refetchCore();
     });
   };
 
