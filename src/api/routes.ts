@@ -5,7 +5,12 @@ import {
   getClubRateDiscount,
   insertClubRateDiscount,
 } from "../methods/discounts";
-import { getLocations, getOrdersForLocations } from "../methods/general";
+import {
+  getCategories,
+  getLocations,
+  getOrdersForLocations,
+} from "../methods/general";
+import { ClubDiscount, ClubDiscountWithRaw } from "../types";
 import { authenticate } from "./middleware";
 
 const client = new Client({
@@ -15,20 +20,28 @@ const client = new Client({
 
 const router = express.Router();
 
-router.use(authenticate);
+// router.use(authenticate);
 
 BigInt.prototype.toJSON = function () {
   return this.toString();
 };
 
-router.get("/discount", async (req, res) => {
+router.get("/core", async (req, res) => {
+  let discount: ClubDiscountWithRaw[];
   try {
-    const discount = await getClubRateDiscount(client);
-    delete discount.raw;
-    res.json([discount]);
-  } catch (ex) {
-    res.json([]);
+    discount = [await getClubRateDiscount(client)];
+    delete discount[0].raw;
+  } catch (e) {
+    discount = [];
   }
+  let categoreies = await getCategories(client);
+  res.json({
+    discount: discount !== undefined ? discount : [],
+    categories: categoreies.map((category) => ({
+      id: category.id,
+      name: category.categoryData?.name || "",
+    })),
+  });
 });
 
 router.post("/discount", async (req, res) => {
@@ -63,7 +76,6 @@ router.get("/orders", async (req, res) => {
     const orders = await getOrdersForLocations(client, locationIds);
     res.json(orders.result.orders);
   } catch (ex) {
-    console.error(ex.message);
     res.sendStatus(500);
   }
 });

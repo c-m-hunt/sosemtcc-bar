@@ -16,3 +16,13 @@ export interface ClubDiscountWithRaw extends ClubDiscount {
     categories?: CatalogObject[];
   };
 }
+
+export interface Category {
+  name: string;
+  id: string;
+}
+
+export interface CoreResponse {
+  discount: ClubDiscount[];
+  categories: Category[];
+}

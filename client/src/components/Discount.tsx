@@ -1,21 +1,21 @@
 import React from "react";
 import { Card, Button, Alert, Table } from "react-bootstrap";
 import {
-  useFetchDiscountQuery,
+  useFetchCoreQuery,
   useInsertDiscountMutation,
   useDeleteDiscountMutation,
 } from "../store/services/bar";
 
 export const Discount = () => {
   const {
-    data: discounts,
+    data,
     isLoading,
     isFetching,
     refetch: refetechDiscount,
-  } = useFetchDiscountQuery();
+  } = useFetchCoreQuery();
   const [insertDiscount, insertDiscountResult] = useInsertDiscountMutation();
   const [deleteDiscount, deleteDiscountResult] = useDeleteDiscountMutation();
-  const discount = discounts?.length === 1 ? discounts[0] : null;
+  const discount = data?.discount?.length === 1 ? data?.discount[0] : undefined;
 
   const loading =
     isLoading ||
