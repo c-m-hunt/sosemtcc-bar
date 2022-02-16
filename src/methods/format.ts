@@ -1,5 +1,11 @@
-import { CatalogItem, CatalogObject } from "square";
-import { Category, Product } from "../types";
+import {
+  CatalogItem,
+  CatalogObject,
+  Location as SqLocation,
+  Money as SqMoney,
+  Order as SqOrder,
+} from "square";
+import { Category, Product, Location, Order, Money } from "../types";
 
 export const formatCategory = (category: CatalogObject): Category => ({
   id: category.id,
@@ -21,14 +27,70 @@ export const formatProduct = (
         ?.map((variation) => ({
           id: variation.id,
           name: variation.itemVariationData?.name || "",
-          price: {
-            currencyCode:
-              variation.itemVariationData?.priceMoney?.currency || "",
-            amount:
-              Number(variation.itemVariationData?.priceMoney?.amount) / 100 ||
-              0,
-          },
+          price: convertSQMoney(variation.itemVariationData?.priceMoney),
         }))
         .filter((variation) => variation) || [],
   };
+};
+
+export const formatLocation = (location: SqLocation): Location => ({
+  id: location.id!,
+  name: location.name!,
+});
+
+export const convertSQMoney = (moneyIn: SqMoney | undefined): Money => {
+  if (!moneyIn) {
+    return { currencyCode: "GBP", amount: 0 };
+  }
+  return {
+    currencyCode: moneyIn.currency || "",
+    amount: Number(moneyIn.amount) / 100 || 0,
+  };
+};
+
+export const formatOrder = (
+  order: SqOrder,
+  products: Product[],
+  categories: Category[],
+  locations: Location[]
+): Order => {
+  let orderOut: Order = {
+    id: order.id!,
+    location:
+      locations.find((location) => location.id === order.locationId!) ||
+      undefined,
+    date: order.createdAt ? new Date(order.createdAt) : undefined,
+    lines: [],
+    total: convertSQMoney(order.netAmounts!.totalMoney),
+    tenders: [],
+  };
+
+  orderOut.tenders = order.tenders!.map((tender) => {
+    return {
+      id: tender.id!,
+      amount: convertSQMoney(tender.amountMoney!),
+      processingFee: convertSQMoney(tender.processingFeeMoney!),
+      card: tender.cardDetails
+        ? {
+            brand: tender.cardDetails.card?.cardBrand!,
+            lastFour: tender.cardDetails.card?.last4!,
+            method: tender.cardDetails.entryMethod,
+          }
+        : undefined,
+      type: tender.type!,
+    };
+  });
+
+  orderOut.lines = order.lineItems!.map((line) => {
+    return {
+      variantId: line.catalogObjectId!,
+      variationName: line.variationName!,
+      name: line.name!,
+      quantity: line.quantity!,
+      price: convertSQMoney(line.grossSalesMoney!),
+      total: convertSQMoney(line.totalMoney!),
+    };
+  });
+
+  return orderOut as Order;
 };

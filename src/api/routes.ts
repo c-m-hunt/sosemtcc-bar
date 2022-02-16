@@ -5,7 +5,6 @@ import {
   getClubRateDiscount,
   insertClubRateDiscount,
 } from "../methods/discounts";
-import { formatCategory, formatProduct } from "../methods/format";
 import {
   getCategories,
   getLocations,
@@ -24,6 +23,7 @@ const router = express.Router();
 
 // router.use(authenticate);
 
+// @ts-ignore
 BigInt.prototype.toJSON = function () {
   return this.toString();
 };
@@ -36,15 +36,14 @@ router.get("/core", async (req, res) => {
   } catch (e) {
     discount = [];
   }
-  let categoreies = await getCategories(client);
+  let categories = await getCategories(client);
   let products = await getProducts(client);
-  const formattedCategories = categoreies.map((category) =>
-    formatCategory(category)
-  );
+  let locations = await getLocations(client);
   res.json({
     discount: discount !== undefined ? discount : [],
-    categories: formattedCategories,
-    products: products.map((prod) => formatProduct(prod, formattedCategories)),
+    categories,
+    products,
+    locations,
   });
 });
 
@@ -70,15 +69,14 @@ router.delete("/discount", async (req, res) => {
 
 router.get("/orders", async (req, res) => {
   try {
-    const locationRes = await getLocations(client);
-    const locations = locationRes.result.locations;
+    const locations = await getLocations(client);
     if (!locations || locations.length === 0) {
       res.sendStatus(404);
       return;
     }
     const locationIds = locations.map((l) => l.id!);
     const orders = await getOrdersForLocations(client, locationIds);
-    res.json(orders.result.orders);
+    res.json(orders);
   } catch (ex) {
     res.sendStatus(500);
   }

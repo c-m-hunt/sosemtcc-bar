@@ -1,4 +1,5 @@
 import { CatalogObject } from "square";
+export * from "./api";
 
 export interface ClubDiscount {
   name: string;
@@ -22,7 +23,7 @@ export interface Category {
   id: string;
 }
 
-export interface Price {
+export interface Money {
   currencyCode: string;
   amount: number;
 }
@@ -30,7 +31,7 @@ export interface Price {
 export interface ProductVariation {
   id: string;
   name: string;
-  price: Price;
+  price: Money;
 }
 
 export interface Product {
@@ -40,8 +41,39 @@ export interface Product {
   variations: ProductVariation[];
 }
 
-export interface CoreResponse {
-  discount: ClubDiscount[];
-  categories: Category[];
-  products: Product[];
+export interface Location {
+  id: string;
+  name: string;
+}
+
+export interface OrderLine {
+  variantId: string;
+  variationName: string;
+  name: string;
+  quantity: number | string;
+  price: Money;
+  total: Money;
+}
+
+export interface Card {
+  brand: string;
+  lastFour: string;
+  method?: string;
+}
+
+export interface Tender {
+  id: string;
+  amount: Money;
+  processingFee: Money;
+  card?: Card;
+  type?: string;
+}
+
+export interface Order {
+  id: string;
+  location?: Location;
+  lines: OrderLine[];
+  date?: Date;
+  total: Money;
+  tenders: Tender[];
 }
