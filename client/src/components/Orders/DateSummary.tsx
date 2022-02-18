@@ -28,13 +28,13 @@ export const DateSummary = () => {
               {Object.keys(ordersByDate).map((date: string) => {
                 const orders = ordersByDate[date];
                 const total = orders.reduce((acc, order) => {
-                  const orderAmt = Number(order.netAmounts?.totalMoney?.amount);
+                  const orderAmt = Number(order.total.amount);
                   return acc + orderAmt;
                 }, 0);
                 const fees = orders.reduce((acc, order) => {
                   const transFee = order.tenders?.reduce(
                     (accTender, tender) =>
-                      accTender + Number(tender.processingFeeMoney?.amount),
+                      accTender + Number(tender.processingFee.amount),
                     0
                   );
                   return acc + (transFee || 0);
@@ -44,10 +44,10 @@ export const DateSummary = () => {
                     <td>{date}</td>
                     <td className="money">{orders.length}</td>
                     <td className="money">
-                      £{(total / 100 / orders.length).toFixed(2)}
+                      £{(total / orders.length).toFixed(2)}
                     </td>
-                    <td className="money">£{(fees / 100).toFixed(2)}</td>
-                    <td className="money">£{(total / 100).toFixed(2)}</td>
+                    <td className="money">£{fees.toFixed(2)}</td>
+                    <td className="money">£{total.toFixed(2)}</td>
                   </tr>
                 );
               })}

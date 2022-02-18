@@ -1,7 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { config } from "./../../config";
-import { Order } from "square";
-import { ClubDiscount, CoreResponse } from "../../types";
+import { ClubDiscount, CoreResponse, Order } from "../../types";
 import { RootState } from "../store";
 
 export const API_REDUCER = "api";

@@ -1,6 +1,6 @@
 import React from "react";
 import { Table } from "react-bootstrap";
-import { Order } from "square";
+import { Order } from "../../types";
 
 interface TopProductsProperties {
   orders: Order[];
@@ -9,12 +9,12 @@ interface TopProductsProperties {
 
 export const TopProducts = ({ orders, show }: TopProductsProperties) => {
   const productTotals = orders.reduce((acc, order) => {
-    if (order.lineItems) {
-      for (let item of order.lineItems) {
+    if (order.lines) {
+      for (let item of order.lines) {
         if (!Object.keys(acc).includes(item.name!)) {
           acc[item.name!] = [0, 0];
         }
-        acc[item.name!][0] += Number(item.totalMoney?.amount);
+        acc[item.name!][0] += Number(item.total.amount);
         acc[item.name!][1] += Number(item.quantity);
       }
     }
@@ -47,7 +47,7 @@ export const TopProducts = ({ orders, show }: TopProductsProperties) => {
             return (
               <tr key={product.name}>
                 <td>{product.name}</td>
-                <td className="money">£{(product.total / 100).toFixed(2)}</td>
+                <td className="money">£{product.total.toFixed(2)}</td>
                 <td className="money">{product.quantity}</td>
               </tr>
             );

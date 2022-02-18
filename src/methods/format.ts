@@ -7,6 +7,8 @@ import {
 } from "square";
 import { Category, Product, Location, Order, Money } from "../types";
 
+import { getCategoryFromCategoryId, getProductFromVariantId } from "./utils";
+
 export const formatCategory = (category: CatalogObject): Category => ({
   id: category.id,
   name: category.categoryData?.name || "",
@@ -82,6 +84,7 @@ export const formatOrder = (
   });
 
   orderOut.lines = order.lineItems!.map((line) => {
+    const product = getProductFromVariantId(products, line.catalogObjectId!);
     return {
       variantId: line.catalogObjectId!,
       variationName: line.variationName!,
@@ -89,6 +92,7 @@ export const formatOrder = (
       quantity: line.quantity!,
       price: convertSQMoney(line.grossSalesMoney!),
       total: convertSQMoney(line.totalMoney!),
+      product: product!,
     };
   });
 

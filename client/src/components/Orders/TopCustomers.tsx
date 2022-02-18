@@ -1,6 +1,6 @@
 import React from "react";
 import { Table } from "react-bootstrap";
-import { Order } from "square";
+import { Order } from "../../types";
 interface TopCustomersProperties {
   orders: Order[];
   show: number;
@@ -10,11 +10,11 @@ export const TopCustomers = ({ orders, show }: TopCustomersProperties) => {
   const customers = orders.reduce((acc, order) => {
     if (order.tenders) {
       for (let trans of order.tenders?.filter((t) => t.type === "CARD")) {
-        const card = `${trans.cardDetails?.card?.cardBrand}|${trans.cardDetails?.card?.last4}`;
+        const card = `${trans.card?.brand}|${trans.card?.lastFour}`;
         if (!Object.keys(acc).includes(card)) {
           acc[card] = 0;
         }
-        acc[card] += Number(trans.amountMoney?.amount) || 0;
+        acc[card] += Number(trans.amount.amount) || 0;
       }
     }
     return acc;
@@ -45,7 +45,7 @@ export const TopCustomers = ({ orders, show }: TopCustomersProperties) => {
             <tr key={customer.cardNo}>
               <td>{customer.cardNo}</td>
               <td>{customer.cardBrand}</td>
-              <td className="money">£{(customer.total / 100).toFixed(2)}</td>
+              <td className="money">£{customer.total.toFixed(2)}</td>
             </tr>
           ))}
         </tbody>

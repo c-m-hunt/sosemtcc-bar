@@ -53,6 +53,7 @@ export interface OrderLine {
   quantity: number | string;
   price: Money;
   total: Money;
+  product: Product;
 }
 
 export interface Card {
@@ -75,5 +76,6 @@ export interface Order {
   lines: OrderLine[];
   date?: Date;
   total: Money;
+  processingFee: Money;
   tenders: Tender[];
 }

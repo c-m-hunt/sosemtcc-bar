@@ -1,24 +1,12 @@
 import React from "react";
 import { Alert, Table } from "react-bootstrap";
-import { Order } from "square";
-import { Product } from "../../types";
+import { Order } from "../../types";
 import { useFetchCoreQuery } from "../../store/services/bar";
 
 interface TopCatgoriesProperties {
   orders: Order[];
   show: number;
 }
-
-const findProduct = (variationId: string, products: Product[]) => {
-  for (const product of products) {
-    for (const variation of product.variations) {
-      if (variation.id === variationId) {
-        return product;
-      }
-    }
-  }
-  return null;
-};
 
 export const TopCategories = ({ orders, show }: TopCatgoriesProperties) => {
   const { data, isLoading } = useFetchCoreQuery();
@@ -38,18 +26,15 @@ export const TopCategories = ({ orders, show }: TopCatgoriesProperties) => {
   }
 
   const categoryTotals = orders.reduce((acc, order) => {
-    if (order.lineItems) {
-      for (let item of order.lineItems) {
-        if (item.catalogObjectId) {
-          const product = findProduct(item.catalogObjectId, products);
-          if (product && product.category?.id) {
-            const categoryId = product.category.id;
-            if (!Object.keys(acc).includes(categoryId)) {
-              acc[categoryId] = [0, 0];
-            }
-            acc[categoryId][0] += Number(item.totalMoney?.amount);
-            acc[categoryId][1] += Number(item.quantity);
+    if (order.lines) {
+      for (let item of order.lines) {
+        const categoryId = item.product.category?.id;
+        if (categoryId) {
+          if (!Object.keys(acc).includes(categoryId)) {
+            acc[categoryId] = [0, 0];
           }
+          acc[categoryId][0] += Number(item.total.amount);
+          acc[categoryId][1] += Number(item.quantity);
         }
       }
     }
@@ -79,7 +64,7 @@ export const TopCategories = ({ orders, show }: TopCatgoriesProperties) => {
             return (
               <tr key={category.name}>
                 <td>{category.name}</td>
-                <td className="money">£{(category.total / 100).toFixed(2)}</td>
+                <td className="money">£{category.total.toFixed(2)}</td>
               </tr>
             );
           })}

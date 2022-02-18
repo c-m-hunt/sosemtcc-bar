@@ -1,8 +1,8 @@
-import { Order } from "square";
+import { Order } from "./types";
 
 export const groupOrdersByDate = (orders: Order[]) => {
   return orders?.reduce((acc, order) => {
-    const date = new Date(order.createdAt!);
+    const date = new Date(order.date!);
     const dateString = `${date.getDate()}/${
       date.getMonth() + 1
     }/${date.getFullYear()}`;
@@ -16,7 +16,7 @@ export const groupOrdersByDate = (orders: Order[]) => {
 
 export const filterOrdersByDate = (orders: Order[], date: Date) => {
   return orders?.filter((order) => {
-    const orderDate = new Date(order.createdAt!);
+    const orderDate = new Date(order.date!);
     return orderDate.toDateString() === date.toDateString();
   });
 };
