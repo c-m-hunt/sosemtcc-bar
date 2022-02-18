@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { Card, Alert, Table, Form } from "react-bootstrap";
-import { Order } from "square";
+import { Card, Alert, Form } from "react-bootstrap";
+import { Order } from "../../types";
 import { useFetchOrdersQuery } from "../../store/services/bar";
 import { filterOrdersByDate } from "../../utils";
 import { TopProducts } from "./TopProducts";
@@ -15,9 +15,7 @@ export const DateOverview = ({ date }: DateOverviewProps) => {
   const { data: orders, isLoading } = useFetchOrdersQuery();
   const [selectedDate, setSelectedDate] = useState(date);
   if (orders && orders.length > 0 && !selectedDate) {
-    setSelectedDate(
-      orders[0].createdAt ? new Date(orders[0].createdAt) : new Date()
-    );
+    setSelectedDate(orders[0].date ? new Date(orders[0].date) : new Date());
   }
 
   const ordersForDate = selectedDate
@@ -60,8 +58,8 @@ export const DateSelector = ({
   selectedDate,
 }: DateSelectorProperties) => {
   const dates = orders.reduce((acc, order) => {
-    if (order.createdAt) {
-      acc.push(new Date(order.createdAt).toDateString());
+    if (order.date) {
+      acc.push(new Date(order.date).toDateString());
     }
     return acc;
   }, [] as string[]);
