@@ -1,6 +1,6 @@
 import React from "react";
 import { Alert, Table } from "react-bootstrap";
-import { Order } from "../../types";
+import { Order, Category } from "../../types";
 import { useFetchCoreQuery } from "../../store/services/bar";
 
 interface TopCatgoriesProperties {
@@ -42,7 +42,7 @@ export const TopCategories = ({ orders, show }: TopCatgoriesProperties) => {
   }, {} as { [key: string]: [number, number] });
   let topCategories = Object.keys(categoryTotals).map((categoryId) => {
     return {
-      name: categories.find((category) => category.id === categoryId)?.name,
+      name: categories.find((category: Category) => category.id === categoryId)?.name,
       total: categoryTotals[categoryId][0],
     };
   });
