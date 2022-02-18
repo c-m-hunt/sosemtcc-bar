@@ -12,7 +12,7 @@ COPY ["client/package.json", "client/yarn.lock", "./"]
 RUN yarn install
 
 COPY client .
-COPY src/types/data.ts src/serverTypes.ts
+COPY src/types/index.ts src/serverTypes.ts
 COPY client/src/configProd.ts src/config.ts
 
 WORKDIR /app

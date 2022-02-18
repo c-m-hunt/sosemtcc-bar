@@ -7,7 +7,6 @@ export interface CoreResponse {
   locations: Location[];
 }
 
-
 export interface ClubDiscount {
   name: string;
   discountType: string;
