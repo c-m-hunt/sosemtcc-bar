@@ -42,7 +42,8 @@ export const TopCategories = ({ orders, show }: TopCatgoriesProperties) => {
   }, {} as { [key: string]: [number, number] });
   let topCategories = Object.keys(categoryTotals).map((categoryId) => {
     return {
-      name: categories.find((category: Category) => category.id === categoryId)?.name,
+      name: categories.find((category: Category) => category.id === categoryId)
+        ?.name,
       total: categoryTotals[categoryId][0],
     };
   });

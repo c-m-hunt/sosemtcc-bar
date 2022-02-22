@@ -5,7 +5,6 @@ import {
   CatalogObject,
   Client,
   ListCatalogResponse,
-  SearchOrdersResponse,
 } from "square";
 
 import { Location, Category, Product, Order } from "../types";
@@ -75,9 +74,20 @@ export const getItemsByType = async (
   return items;
 };
 
-export const getCategories = async (client: Client): Promise<Category[]> => {
+export const getCategories = async (
+  client: Client,
+  categoryIds?: string[]
+): Promise<Category[]> => {
   const categories = await getItemsByType(client, "CATEGORY");
-  return categories.map((category) => formatCategory(category));
+  const formattedCategories = categories.map((category) =>
+    formatCategory(category)
+  );
+  if (categoryIds) {
+    return formattedCategories.filter((category) =>
+      categoryIds.includes(category.id)
+    );
+  }
+  return formattedCategories;
 };
 
 export const getProducts = async (client: Client): Promise<Product[]> => {

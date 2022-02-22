@@ -4,7 +4,8 @@ import {
   useFetchCoreQuery,
   useInsertDiscountMutation,
   useDeleteDiscountMutation,
-} from "../store/services/bar";
+} from "../../store/services/bar";
+import { EnableDiscountForm } from "./EnableForm";
 
 export const Discount = () => {
   const {
@@ -32,8 +33,11 @@ export const Discount = () => {
     loadingMessage = "Deleting club discount...";
   }
 
-  const handleInsertDiscount = () => {
-    insertDiscount().then(() => {
+  const handleInsertDiscount = (categories: string[], discount: number) => {
+    insertDiscount({
+      categories,
+      discount,
+    }).then(() => {
       refetchCore();
     });
   };
@@ -80,13 +84,12 @@ export const Discount = () => {
         {!loading && !discount && (
           <>
             <Alert variant="danger">Club discount is currently disabled</Alert>
-            <Button
-              variant="success"
-              disabled={loading}
-              onClick={handleInsertDiscount}
-            >
-              Enable club discount
-            </Button>
+            <EnableDiscountForm
+              loading={loading}
+              enableDiscount={(categories, discount) => {
+                handleInsertDiscount(categories, discount);
+              }}
+            />
           </>
         )}
       </Card.Body>

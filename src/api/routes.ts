@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Request } from "express";
 import { Client, Environment } from "square";
 import {
   deleteClubRateDiscount,
@@ -11,7 +11,7 @@ import {
   getOrdersForLocations,
   getProducts,
 } from "../methods/general";
-import { ClubDiscount, ClubDiscountWithRaw } from "../types";
+import { ClubDiscountWithRaw, InsertDiscountRequest } from "../types";
 import { authenticate } from "./middleware";
 
 const client = new Client({
@@ -21,7 +21,7 @@ const client = new Client({
 
 const router = express.Router();
 
-// router.use(authenticate);
+router.use(authenticate);
 
 // @ts-ignore
 BigInt.prototype.toJSON = function () {
@@ -36,9 +36,9 @@ router.get("/core", async (req, res) => {
   } catch (e) {
     discount = [];
   }
-  let categories = await getCategories(client);
-  let products = await getProducts(client);
-  let locations = await getLocations(client);
+  const categories = await getCategories(client);
+  const products = await getProducts(client);
+  const locations = await getLocations(client);
   res.json({
     discount: discount !== undefined ? discount : [],
     categories,
@@ -47,16 +47,30 @@ router.get("/core", async (req, res) => {
   });
 });
 
-router.post("/discount", async (req, res) => {
-  try {
-    const discountResponse = await insertClubRateDiscount(client);
-    const discount = await getClubRateDiscount(client);
-    delete discount.raw;
-    res.json([discount]);
-  } catch (ex) {
-    res.sendStatus(500);
+router.post(
+  "/discount",
+  async (
+    req: Request<
+      Record<string, unknown>,
+      ClubDiscountWithRaw[],
+      InsertDiscountRequest
+    >,
+    res
+  ) => {
+    try {
+      const discountResponse = await insertClubRateDiscount(
+        client,
+        req.body.categories,
+        req.body.discount
+      );
+      const discount = await getClubRateDiscount(client);
+      delete discount.raw;
+      res.json([discount]);
+    } catch (ex) {
+      res.sendStatus(500);
+    }
   }
-});
+);
 
 router.delete("/discount", async (req, res) => {
   try {

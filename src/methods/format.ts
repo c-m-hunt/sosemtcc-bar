@@ -56,7 +56,7 @@ export const formatOrder = (
   categories: Category[],
   locations: Location[]
 ): Order => {
-  let orderOut: Order = {
+  const orderOut: Order = {
     id: order.id!,
     location:
       locations.find((location) => location.id === order.locationId!) ||

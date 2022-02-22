@@ -4,7 +4,7 @@ import {
   BatchUpsertCatalogObjectsRequest,
 } from "square";
 import { v4 as uuidv4 } from "uuid";
-import { deleteInventoryItems, getItems } from "./general";
+import { deleteInventoryItems, getCategories, getItems } from "./general";
 import { config } from "../config";
 import { ClubDiscountWithRaw } from "../types";
 import { squareCache, ALL_ITEMS_CACHE_KEY } from "./cache";
@@ -85,7 +85,11 @@ export const getClubDiscountCategories = async (client: Client) => {
   );
 };
 
-export const insertClubRateDiscount = async (client: Client) => {
+export const insertClubRateDiscount = async (
+  client: Client,
+  categoryIds?: string[],
+  discountAmount?: number
+) => {
   let existingDiscount;
   try {
     existingDiscount = await getClubRateDiscount(client);
@@ -95,7 +99,9 @@ export const insertClubRateDiscount = async (client: Client) => {
   if (existingDiscount) {
     throw Error("Club discount already exists");
   }
-  const categories = await getClubDiscountCategories(client);
+  const categories = categoryIds
+    ? await getCategories(client, categoryIds)
+    : await getClubDiscountCategories(client);
 
   const discountsApi = client.catalogApi;
   const productSet: CatalogObject = {
@@ -117,7 +123,7 @@ export const insertClubRateDiscount = async (client: Client) => {
     discountData: {
       name: clubDiscountName,
       discountType: "FIXED_PERCENTAGE",
-      percentage: "15.0",
+      percentage: discountAmount?.toString() || "15.0",
       modifyTaxBasis: "MODIFY_TAX_BASIS",
     },
   };

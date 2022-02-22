@@ -84,3 +84,8 @@ export interface Order {
   total: Money;
   tenders: Tender[];
 }
+
+export interface InsertDiscountRequest {
+  categories: string[];
+  discount: number;
+}

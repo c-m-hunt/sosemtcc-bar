@@ -1,6 +1,11 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { config } from "./../../config";
-import { ClubDiscount, CoreResponse, Order } from "../../types";
+import {
+  ClubDiscount,
+  CoreResponse,
+  InsertDiscountRequest,
+  Order,
+} from "../../types";
 import { RootState } from "../store";
 
 export const API_REDUCER = "api";
@@ -31,10 +36,11 @@ export const barApi = createApi({
       }),
       providesTags: [DISCOUNT_TAG],
     }),
-    insertDiscount: builder.mutation<ClubDiscount[], void>({
-      query: () => ({
+    insertDiscount: builder.mutation<ClubDiscount[], InsertDiscountRequest>({
+      query: (discount) => ({
         url: `discount`,
         method: "POST",
+        body: discount,
       }),
       invalidatesTags: [DISCOUNT_TAG],
     }),
