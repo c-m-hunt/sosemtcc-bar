@@ -27,13 +27,13 @@ const App = () => {
         )}
         {key && (
           <Row>
-            <Col>
+            <Col md={6} lg>
               <Discount />
             </Col>
-            <Col>
+            <Col md={6} lg>
               <DateOverview />
             </Col>
-            <Col>
+            <Col md={6} lg>
               <DateSummary />
             </Col>
           </Row>
