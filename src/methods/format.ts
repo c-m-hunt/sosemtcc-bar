@@ -67,21 +67,23 @@ export const formatOrder = (
     tenders: [],
   };
 
-  orderOut.tenders = order.tenders!.map((tender) => {
-    return {
-      id: tender.id!,
-      amount: convertSQMoney(tender.amountMoney!),
-      processingFee: convertSQMoney(tender.processingFeeMoney!),
-      card: tender.cardDetails
-        ? {
-            brand: tender.cardDetails.card?.cardBrand!,
-            lastFour: tender.cardDetails.card?.last4!,
-            method: tender.cardDetails.entryMethod,
-          }
-        : undefined,
-      type: tender.type!,
-    };
-  });
+  if (order.tenders) {
+    orderOut.tenders = order.tenders!.map((tender) => {
+      return {
+        id: tender.id!,
+        amount: convertSQMoney(tender.amountMoney!),
+        processingFee: convertSQMoney(tender.processingFeeMoney!),
+        card: tender.cardDetails
+          ? {
+              brand: tender.cardDetails.card?.cardBrand!,
+              lastFour: tender.cardDetails.card?.last4!,
+              method: tender.cardDetails.entryMethod,
+            }
+          : undefined,
+        type: tender.type!,
+      };
+    });
+  }
 
   orderOut.lines = order.lineItems!.map((line) => {
     const product = getProductFromVariantId(products, line.catalogObjectId!);
