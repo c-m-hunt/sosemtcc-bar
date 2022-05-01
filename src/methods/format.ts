@@ -67,34 +67,39 @@ export const formatOrder = (
     tenders: [],
   };
 
-  orderOut.tenders = order.tenders!.map((tender) => {
-    return {
-      id: tender.id!,
-      amount: convertSQMoney(tender.amountMoney!),
-      processingFee: convertSQMoney(tender.processingFeeMoney!),
-      card: tender.cardDetails
-        ? {
-            brand: tender.cardDetails.card?.cardBrand!,
-            lastFour: tender.cardDetails.card?.last4!,
-            method: tender.cardDetails.entryMethod,
-          }
-        : undefined,
-      type: tender.type!,
-    };
-  });
+  if (order.tenders) {
+    orderOut.tenders = order.tenders!.map((tender) => {
+      return {
+        id: tender.id!,
+        amount: convertSQMoney(tender.amountMoney!),
+        processingFee: convertSQMoney(tender.processingFeeMoney!),
+        card: tender.cardDetails
+          ? {
+              brand: tender.cardDetails.card?.cardBrand!,
+              lastFour: tender.cardDetails.card?.last4!,
+              method: tender.cardDetails.entryMethod,
+            }
+          : undefined,
+        type: tender.type!,
+      };
+    });
+  }
 
-  orderOut.lines = order.lineItems!.map((line) => {
-    const product = getProductFromVariantId(products, line.catalogObjectId!);
-    return {
-      variantId: line.catalogObjectId!,
-      variationName: line.variationName!,
-      name: line.name!,
-      quantity: line.quantity!,
-      price: convertSQMoney(line.grossSalesMoney!),
-      total: convertSQMoney(line.totalMoney!),
-      product: product!,
-    };
-  });
+  if (order.lineItems) {
+    orderOut.lines = order.lineItems!.map((line) => {
+      const product = getProductFromVariantId(products, line.catalogObjectId!);
+      return {
+        variantId: line.catalogObjectId!,
+        variationName: line.variationName!,
+        name: line.name!,
+        quantity: line.quantity!,
+        price: convertSQMoney(line.grossSalesMoney!),
+        total: convertSQMoney(line.totalMoney!),
+        product: product!,
+      };
+    });
+  }
+
 
   return orderOut as Order;
 };
