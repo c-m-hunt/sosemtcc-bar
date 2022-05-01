@@ -92,7 +92,7 @@ router.get("/orders", async (req, res) => {
     const orders = await getOrdersForLocations(client, locationIds);
     res.json(orders);
   } catch (ex) {
-    console.log(ex)
+    console.log(ex);
     res.sendStatus(500);
   }
 });

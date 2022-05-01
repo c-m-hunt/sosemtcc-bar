@@ -100,6 +100,5 @@ export const formatOrder = (
     });
   }
 
-
   return orderOut as Order;
 };
