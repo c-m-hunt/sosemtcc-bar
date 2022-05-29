@@ -28,7 +28,11 @@ export const TopCategories = ({ orders, show }: TopCatgoriesProperties) => {
   const categoryTotals = orders.reduce((acc, order) => {
     if (order.lines) {
       for (let item of order.lines) {
-        const categoryId = item.product.category?.id;
+        const categoryId = item.product && Object.keys(item.product).includes("category") ? item.product.category?.id : "unknown";
+        if (categoryId === "unknown") {
+          console.log(item)
+        }
+        
         if (categoryId) {
           if (!Object.keys(acc).includes(categoryId)) {
             acc[categoryId] = [0, 0];

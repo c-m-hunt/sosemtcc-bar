@@ -83,6 +83,8 @@ export const formatOrder = (
         type: tender.type!,
       };
     });
+  } else {
+    console.log(order)
   }
 
   if (order.lineItems) {
