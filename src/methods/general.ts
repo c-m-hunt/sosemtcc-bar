@@ -22,12 +22,14 @@ import {
   formatOrder,
 } from "./format";
 
-export const getItems = async (client: Client): Promise<CatalogObject[]> => {
-  const cached =
-    squareCache.get<ApiResponse<ListCatalogResponse>>(ALL_ITEMS_CACHE_KEY);
-  if (cached) {
-    return cached.result.objects || [];
-  }
+export const getItems = async (client: Client, refreshCache: boolean = false): Promise<CatalogObject[]> => {
+  // if (!refreshCache) {
+  //   const cached =
+  //     squareCache.get<ApiResponse<ListCatalogResponse>>(ALL_ITEMS_CACHE_KEY);
+  //   if (cached) {
+  //     return cached.result.objects || [];
+  //   }
+  // }
   const catalogApi = client.catalogApi;
   const items = await catalogApi.listCatalog();
   squareCache.set(ALL_ITEMS_CACHE_KEY, items);

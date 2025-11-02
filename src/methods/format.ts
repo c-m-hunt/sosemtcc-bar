@@ -84,7 +84,7 @@ export const formatOrder = (
       };
     });
   } else {
-    console.log(order)
+    console.log(order);
   }
 
   if (order.lineItems) {
@@ -100,6 +100,9 @@ export const formatOrder = (
         product: product!,
       };
     });
+  } else {
+    console.log("No line items");
+    console.log(orderOut);
   }
 
   return orderOut as Order;

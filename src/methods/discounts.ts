@@ -15,10 +15,16 @@ export const getClubRateDiscount = async (
   client: Client
 ): Promise<ClubDiscountWithRaw> => {
   const catalogApi = client.catalogApi;
-  const items = await getItems(client);
+  const items = await getItems(client, true);
+ 
+  const discounts = items.filter(
+    (item) => item.type === "DISCOUNT"
+  );
+  console.log(discounts)
   const discount = items.filter(
     (item) => item.discountData?.name === clubDiscountName
   );
+  console.log(discount);
   if (!discount || discount.length === 0) {
     throw Error("No club discount found");
   }
@@ -147,6 +153,7 @@ export const insertClubRateDiscount = async (
   const response = await discountsApi.batchUpsertCatalogObjects(
     batchUpsertRequest
   );
+  console.log(response)
   squareCache.del(ALL_ITEMS_CACHE_KEY);
   return response;
 };

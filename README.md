@@ -1,2 +1,3 @@
 # SOSEMTCC Bar Helper
 
+## Install

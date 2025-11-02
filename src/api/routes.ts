@@ -34,17 +34,22 @@ router.get("/core", async (req, res) => {
     discount = [await getClubRateDiscount(client)];
     delete discount[0].raw;
   } catch (e) {
+    console.log(e)
     discount = [];
   }
-  const categories = await getCategories(client);
-  const products = await getProducts(client);
-  const locations = await getLocations(client);
-  res.json({
-    discount: discount !== undefined ? discount : [],
-    categories,
-    products,
-    locations,
-  });
+  try {
+    const categories = await getCategories(client);
+    const products = await getProducts(client);
+    const locations = await getLocations(client);
+    res.json({
+      discount: discount !== undefined ? discount : [],
+      categories,
+      products,
+      locations,
+    });
+  } catch (e) {
+    res.status(500).json({ error: (e as Error).message });
+  }
 });
 
 router.post(
@@ -67,6 +72,7 @@ router.post(
       delete discount.raw;
       res.json([discount]);
     } catch (ex) {
+      console.log(ex)
       res.sendStatus(500);
     }
   }
